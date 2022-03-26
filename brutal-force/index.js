@@ -1,5 +1,6 @@
 function SudokuSolver() {
   var puzzle_table = [];
+  let recursiveCalls = 0
   /*
   * Check if the number is a legal candidate
   * for the given cell (by Sudoku rules).
@@ -20,6 +21,7 @@ function SudokuSolver() {
   * the puzzle is solved.
   */
   function get_candidate(index) {
+    recursiveCalls++
     if (index >= puzzle_table.length) {
       return true;
     } else if (puzzle_table[index] != 0) {
@@ -43,10 +45,10 @@ function SudokuSolver() {
   */
   function chunk_in_groups(arr) {
     var result = [];
-    console.log('aqui')
     for (var i = 0; i < arr.length; i += 9) {
       result.push(arr.slice(i, i + 9));
     }
+    console.log(recursiveCalls)
     return result;
   }
   /*
