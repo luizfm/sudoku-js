@@ -1,52 +1,78 @@
-const solve = function(board, cell) { // 'board' is a 2D array (a sudoku board) and 'cell' is the cell [0,81) at which we start solving
-  let box, good, guesses, prodSolution, val, x, y;
-
-  if(cell === null) {
-      cell = 0
+function SudokuSolver() {
+  var puzzle_table = [];
+  /*
+  * Check if the number is a legal candidate
+  * for the given cell (by Sudoku rules).
+  */
+  function check_candidate(num, row, col) {
+    for (var i = 0; i < 9; i++) {
+      var b_index = ((Math.floor(row / 3) * 3) + Math.floor(i / 3)) * 9 + (Math.floor(col / 3) * 3) + (i % 3);
+      if (num == puzzle_table[(row * 9) + i] ||
+        num == puzzle_table[col + (i * 9)] ||
+        num == puzzle_table[b_index]) {
+        return false;
+      }
+    }
+    return true;
   }
+  /*
+  * Recursively test all possible numbers for a given cell until
+  * the puzzle is solved.
+  */
+  function get_candidate(index) {
+    if (index >= puzzle_table.length) {
+      return true;
+    } else if (puzzle_table[index] != 0) {
+      return get_candidate(index + 1);
+    }
 
-  if(cell === 81) {
-      val = board
-  } else {
-      val = board[x = cell / 9 | 0][y = cell % 9] !== 0
-          ? solve(board, cell + 1)
-          : undefined;
-  }  // Base case, where we're at a filled cell or all 81 cells filled
+    for (var i = 1; i <= 9; i++) {
+      if (check_candidate(i, Math.floor(index / 9), index % 9)) {
+        puzzle_table[index] = i;
+        if (get_candidate(index + 1)) {
+          return true;
+        }
+      }
+    }
 
-  if(val) {
-      return val;
+    puzzle_table[index] = 0;
+    return false;
   }
+  /*
+  * Split result of puzzle into chunks by 9.
+  */
+  function chunk_in_groups(arr) {
+    var result = [];
+    console.log('aqui')
+    for (var i = 0; i < arr.length; i += 9) {
+      result.push(arr.slice(i, i + 9));
+    }
+    return result;
+  }
+  /*
+  * Start solving the game for provided puzzle and options.
+  */
+  this.solve = function (puzzle, options) {
+    options = options || {};
+    var result = options.result || 'string';
+    puzzle_table = puzzle.split('').map(function (v) { return isNaN(v) ? 0 : +v });
 
-  box = function(j) {
-    return sudoku[x - (x % 3) + (j - (j % 3)) / 3][y - (y % 3) + (j % 3)];      // jth cell in sub 3x3 box containing x,y
-  };
+    if (puzzle.length !== 81) return 'Puzzle is not valid.'
+    return !get_candidate(0) ? 'No solution found.' : result === 'chunks' ? chunk_in_groups(puzzle_table) : result === 'array' ? puzzle_table : puzzle_table.join('');
+  }
+}
 
-  good = function(g) {
-    return [0, 1, 2, 3, 4, 5, 6, 7, 8].every(function(i) {
-      return g !== board[x][i] && g !== board[i][y] && g !== box(i); // returns true if and only if board[x][y] when set to g breaks sudoku rules due to collision
-    });
-  };
+if (typeof exports !== 'undefined') {
+  if (typeof module !== 'undefined' && module.exports) {
+    exports = module.exports = SudokuSolver;
+  }
+  exports.SudokuSolver = SudokuSolver;
+} else {
+  window.SudokuSolver = SudokuSolver;
+}
 
-  guesses = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(good); // choose non-conflicting guesses for position (x, y)
+var solver = new SudokuSolver()
 
-  prodSolution = function(g) {  // returns true if and only if a guess actually produces a solution at (x, y)
-    board[x][y] = g;
-    return solve(board, cell + 1);
-  };
+var puzzle = '200000035050019640000040700000002060040081590009750000900800000000020080005000003'
 
-  if ((guesses.some(prodSolution)) || (board[x][y] = 0)) {
-      return board;
-  } // return the solved board if a solution can be produced!
-};
-
-sudoku =  [[1,0,3,0,0,0,0,8,4],
-[0,0,6,0,4,8,0,0,0],
-[0,4,0,0,0,0,0,0,0],
-[2,0,0,0,9,6,1,0,0],
-[0,9,0,8,0,1,0,4,0],
-[0,0,4,3,2,0,0,0,8],
-[0,0,0,0,0,0,0,7,0],
-[0,0,0,1,5,0,4,0,0],
-[0,6,0,0,0,0,2,0,3]]
-
-console.log(solve(sudoku, 0))
+console.log(solver.solve(puzzle, { result: 'chunks' }))
