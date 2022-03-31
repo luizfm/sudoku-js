@@ -76,5 +76,6 @@ if (typeof exports !== 'undefined') {
 var solver = new SudokuSolver()
 
 var puzzle = '200000035050019640000040700000002060040081590009750000900800000000020080005000003'
+var puzzleFromFile = '400600123000002070001030906700928000916000382000361004508010600090800000124006007'
 
-console.log(solver.solve(puzzle, { result: 'chunks' }))
+console.log(solver.solve(puzzleFromFile, { result: 'chunks' }))
