@@ -9,7 +9,7 @@ Sudoku Solver using: Brutal Force, Meta-Heuristic and Heuristic.
 - Startup Disk: Macintosh HD;
 - Graphics: Intel Iris Plus Graphics 645 1536 MB
 
-##Requirements:
+## Requirements:
 
 - To run the following code on your machine you need to have at least a text editor  
 - NodeJS installed. We solved it using node version 17.7.0
