@@ -2,6 +2,13 @@
 # sudoku-js
 Sudoku Solver using: Brutal Force, Meta-Heuristic and Heuristic.
 
+## System Information:
+- MacBook Pro (13-inch, 2020, Two Thunderbolt 3 ports);
+- Processor: 1.4 GHz Quad-Core Intel Core i5;
+- Memory: 8 GB 2133 MHz LPDDR3
+- Startup Disk: Macintosh HD;
+- Graphics: Intel Iris Plus Graphics 645 1536 MB
+
 ##Requirements:
 
 - To run the following code on your machine you need to have at least a text editor  
