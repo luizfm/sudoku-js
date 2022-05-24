@@ -114,15 +114,9 @@ const createRandomSolution = (board, initialBoard) => {
   return board;
 };
 
-// Genetico
-// Busca Tabu
-// Simulated Anealing
-// Hill clibimng
-
 class GeneticSudokuSolver {
   constructor(board) {
     this.populationSize = 300;
-    // this.mutationProbability = 0.2;
     this.elitism = 0.4;
     this.generationNumbers = 3000;
     this.board = board;
