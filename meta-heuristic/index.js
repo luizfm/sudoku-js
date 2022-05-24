@@ -1,5 +1,5 @@
 const cloneBoard = (board) => {
-  return [...board];
+  return board.map((row) => row.map((col) => col));
 };
 
 function checkSquare(board, row, column, value) {
@@ -60,7 +60,6 @@ const checkAllChecks = (board, boardInitial, row, col, candidate) => {
 
 const cost = (board) => {
   let myCost = 0;
-
   board.forEach((row) => {
     row.forEach((col) => {
       if (col === 0) {
@@ -69,17 +68,26 @@ const cost = (board) => {
     });
   });
 
-  console.log(myCost);
   return myCost;
 };
 
 const mutation = (board, initialBoard) => {
+  const exampleBoard = cloneBoard(board);
   const row = Math.floor(Math.random() * (8 - 0 + 1) + 0);
   const col = Math.floor(Math.random() * (8 - 0 + 1) + 0);
   const candidate = Math.floor(Math.random() * (9 - 1 + 1) + 1);
   if (checkAllChecks(board, initialBoard, row, col, candidate)) {
-    board[row][col] = candidate;
+    exampleBoard[row][col] = candidate;
+    return {
+      board: exampleBoard,
+      mutated: true,
+    };
   }
+
+  return {
+    board: null,
+    mutated: false,
+  };
 };
 
 const initialBoard = [
@@ -106,20 +114,25 @@ const createRandomSolution = (board, initialBoard) => {
   return board;
 };
 
+// Genetico
+// Busca Tabu
+// Simulated Anealing
+// Hill clibimng
+
 class GeneticSudokuSolver {
   constructor(board) {
     this.populationSize = 300;
-    this.mutationProbability = 0.2;
-    this.elitism = 0.1;
+    // this.mutationProbability = 0.2;
+    this.elitism = 0.4;
     this.generationNumbers = 3000;
-    this.board = board.map((item) => item.map((i) => i));
+    this.board = board;
   }
 
   execute() {
     let population = [];
     let currentGeneration = 0;
     for (let i = 0; i < this.populationSize; i++) {
-      const board = this.board.map((item) => item.map((i) => i));
+      const board = cloneBoard(this.board);
       population.push(createRandomSolution(board, initialBoard));
     }
 
@@ -139,15 +152,22 @@ class GeneticSudokuSolver {
         };
       }
 
-      population = population.splice(0, elitismNumber);
+      population = population.slice(0, elitismNumber);
       while (population.length < this.populationSize) {
         const m = Math.floor(Math.random() * elitismNumber);
-        population.push(mutation(population[m], initialBoard));
+        const clonedSolution = cloneBoard(population[m]);
+        const { board, mutated } = mutation(clonedSolution, initialBoard);
+
+        if (mutated) {
+          population.push(board, initialBoard);
+        } else {
+          population.push(undefined);
+        }
       }
     }
 
     population.sort((a, b) => {
-      return a - b;
+      return cost(a) - cost(b);
     });
 
     return {
